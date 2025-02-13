@@ -15,16 +15,24 @@ const roomSchema = new mongoose.Schema({
         required:[true, 'A room has to have a floor number']
     },
     roomImage:{
-        type:String
+        type:String,
+        required:[true, 'A room has to have an image']
+    },
+    price:{
+        type:String,
+        required:[true, 'A room has to have a price']
     },
     wifi:{
-        type:Boolean
+        type:Boolean,
+        default:false
     },
     parking:{
-        type:Boolean
+        type:Boolean,
+        default:false
     },
     breakfast:{
-        type:Boolean
+        type:Boolean,
+        default:false
     },
     reservations: [
         { type: mongoose.Schema.Types.ObjectId, 

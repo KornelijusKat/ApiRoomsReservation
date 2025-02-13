@@ -4,5 +4,9 @@ const router = express.Router();
 
 router
     .route('/')
-    .get('')
-    .post('')
+    .get(reservationController.getAllUserReservations)
+    .post(reservationController.getAllUserReservations)
+router
+    .route('/:reservationId/cancel')
+    .post(reservationController.cancelReservation)
+module.exports = router;

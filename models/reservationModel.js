@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
 const Room = require('./roomModel'); 
+const codeRandomizer = require('../apiTools/codeRandomizer');
 const reservationSchema = new mongoose.Schema({
     code: { 
         type: String,
-        required: true },
+        required: true,
+        unique: true,
+        default: codeRandomizer},
     name: { 
         type: String, 
         required: true },
@@ -22,6 +25,10 @@ const reservationSchema = new mongoose.Schema({
     checkout: { 
         type: Date, 
         required: true },
+    createdAt:{
+        type:Date,
+        default:Date.now
+    },
     room: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: "Room"
