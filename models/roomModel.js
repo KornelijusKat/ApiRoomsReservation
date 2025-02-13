@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const reservationModel = require('./reservationModel')
 
 const roomSchema = new mongoose.Schema({
     number:{
@@ -14,7 +15,7 @@ const roomSchema = new mongoose.Schema({
         required:[true, 'A room has to have a floor number']
     },
     roomImage:{
-        type:String,
+        type:String
     },
     wifi:{
         type:Boolean
@@ -22,11 +23,10 @@ const roomSchema = new mongoose.Schema({
     parking:{
         type:Boolean
     },
-    reservations:{
-        type:Array,
-        
-    }
-
+    breakfast:{
+        type:Boolean
+    },
+    reservations: [reservationModel]
 })
 const Room = mongoose.model("Room", roomSchema)
 module.exports = Room;
