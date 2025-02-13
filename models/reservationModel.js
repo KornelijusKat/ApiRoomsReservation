@@ -14,9 +14,9 @@ const reservationSchema = new mongoose.Schema({
         type: Date, 
         required: true },
     room: { 
-        id: { type: Number, required: true }, 
-        number: { type: String, required: true } 
-    } 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "Room", 
+        required: true }
 });
 const Reservation = mongoose.model("Reservation", reservationSchema)
 module.exports = Reservation;

@@ -8,6 +8,9 @@ router
     .get(roomController.getAllRooms)
     .post(roomController.createRoom)
 router
+    .route('/:id')
+    .get(roomController.getRoomById)
+router
     .route("/availability/checkin/:checkin/checkout/:checkout")
     .get(roomController.checkRoomsAvailabilityByDates);
 module.exports = router;

@@ -26,7 +26,10 @@ const roomSchema = new mongoose.Schema({
     breakfast:{
         type:Boolean
     },
-    reservations: [reservationModel]
+    reservations: [
+        { type: mongoose.Schema.Types.ObjectId, 
+            ref: "Reservation" }
+        ]
 })
 const Room = mongoose.model("Room", roomSchema)
 module.exports = Room;

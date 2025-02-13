@@ -17,7 +17,6 @@ exports.createRoom = async(req,res) =>{
     })
 }
 }
-
 exports.getAllRooms = async(req, res) => {
     try{
         const rooms = await Room.find();
@@ -41,7 +40,7 @@ exports.getRoomById = async(req,res) => {
         }
         res.status(200).json({
             rooms: {
-                dbResponse
+                room
             }
         })
     }catch(err){
