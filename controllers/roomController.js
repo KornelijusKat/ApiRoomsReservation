@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Room = require("./../models/roomModel");
-const Reservation = require("./../models/reservationModel")
+const Reservation = require("./../models/reservationModel");
+const { checkout } = require("../app");
 exports.createRoom = async(req,res) =>{
     try{
         const newRoom = await Room.create(req.body);
@@ -53,9 +54,15 @@ exports.checkRoomsAvailabilityByDates =  async(req,res) =>{
     try{
         const allRooms = await Room.aggregate([
             {
-                $project: {
-                    _id: 1,
-                    number: 1,
+                $lookup:{
+                    from:"reservations",
+                    localField: "reservations",
+                    foreignField: "_id",
+                    as: "reservations"
+               }
+            },
+            {
+                $addFields: {
                     availability: {
                         $not: {
                             $gt: [
@@ -66,8 +73,8 @@ exports.checkRoomsAvailabilityByDates =  async(req,res) =>{
                                             as: "reservation",
                                             cond: {
                                                 $and: [
-                                                    { $lt: ["$$reservation.checkin", req.params.checkout] }, 
-                                                    { $gt: ["$$reservation.checkout", req.params.checkin] }  
+                                                    { $lt: ["$$reservation.checkin", new Date(req.params.checkout)] },
+                                                    { $gt: ["$$reservation.checkout", new Date(req.params.checkin)] }
                                                 ]
                                             }
                                         }
@@ -78,7 +85,16 @@ exports.checkRoomsAvailabilityByDates =  async(req,res) =>{
                         }
                     }
                 }
+            },
+            {
+                $project: {
+                    _id: 0,  
+                    id: "$floor",  
+                    number: 1,
+                    availability: 1
+                }
             }
+            
         ]);
         res.status(200).json({
             rooms: allRooms
@@ -93,8 +109,13 @@ exports.checkRoomsAvailabilityByDates =  async(req,res) =>{
 exports.reserveRoom = async(req, res) =>{
     try{
         const dbResponse = await Reservation.create(req.body);
+
+        console.log('hi')
+        await Room.findByIdAndUpdate(req.params.id, {
+            $push: { reservations: dbResponse._id }
+        });
         res.status(201).json({
-            reservations: dbResponse
+            reservations: dbResponse,
         })
     }catch(err){
         res.status(404).json({

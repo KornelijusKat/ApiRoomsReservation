@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const reservationModel = require('./reservationModel')
+const Reservation = require('./reservationModel')
 
 const roomSchema = new mongoose.Schema({
     number:{
