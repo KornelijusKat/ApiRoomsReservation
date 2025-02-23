@@ -12,7 +12,7 @@ exports.getAllUserReservations = async(req, res) => {
             select: "number"
         })
         if(reservationsRes.length < 1){
-            res.status(401).json({
+            return res.status(401).json({
                 error: "Unauthorized"
             })
         }

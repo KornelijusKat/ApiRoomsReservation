@@ -121,22 +121,43 @@ exports.checkRoomsAvailabilityByDates =  async(req,res) =>{
         })
     }
 }
-exports.reserveRoom = async(req, res) =>{
-    try{
-        const dbResponse = await Reservation.create({...req.body, room: req.params.id});
-        const room = await Room.findByIdAndUpdate(req.params.id, {
-            $push: { reservations: dbResponse._id }
-        });
-        if(!room){
-            return res.status(404).json({ error: "A room with this ID does not exist" });
+exports.reserveRoom = async (req, res) => {
+    try {
+        const { checkin, checkout } = req.body;
+        if (!checkin || !checkout) {
+            return res.status(400).json({ error: "Check-in and check-out dates are required." });
         }
-        const formattedRes = formattedReservations({ ...dbResponse._doc, room: { _id: room.id, number: room.number } });
-        res.status(201).json({
-            reservations: formattedRes
-        })
-    }catch(err){
-        res.status(500).json({
-            error: err.message
-        })
+        const checkinDate = new Date(checkin);
+        const checkoutDate = new Date(checkout);
+        if (isNaN(checkinDate.getTime()) || isNaN(checkoutDate.getTime())) {
+            return res.status(400).json({ error: "Invalid date format." });
+        }
+        const room = await Room.findById(req.params.id);
+        if (!room) {
+            return res.status(404).json({ error: "Room not found." });
+        }
+        const overlappingReservations = await Reservation.find({
+            room: req.params.id,
+            $or: [
+                { checkin: { $lt: checkoutDate }, checkout: { $gt: checkinDate } } 
+            ]
+        });
+        if (overlappingReservations.length > 0) {
+            return res.status(400).json({ error: "This room is already booked for the selected dates." });
+        }
+        const newReservation = await Reservation.create({ ...req.body, room: req.params.id });
+        await Room.findByIdAndUpdate(req.params.id, {
+            $push: { reservations: newReservation._id }
+        });
+
+        const formattedRes = formattedReservations({ 
+            ...newReservation._doc, 
+            room: { _id: room.id, number: room.number } 
+        });
+
+        res.status(201).json({ reservations: formattedRes });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-}
+};
