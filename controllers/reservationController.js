@@ -3,7 +3,7 @@ const Reservation = require("./../models/reservationModel")
 const Room = require("./../models/roomModel");
 const formatReservation = require("../apiTools/formattedReservation");
 
-exports.getAllUserReservations = async(req, res) => {
+exports.getUserReservations = async(req, res) => {
     try{
         const { code, name } = req.body;
         console.log(code);

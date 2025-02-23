@@ -4,8 +4,8 @@ const router = express.Router();
 
 router
     .route('/')
-    .get(reservationController.getAllUserReservations)
-    .post(reservationController.getAllUserReservations)
+    .get(reservationController.getUserReservations)
+    .post(reservationController.getUserReservations)
 router
     .route('/:reservationId/cancel')
     .post(reservationController.cancelReservation)
